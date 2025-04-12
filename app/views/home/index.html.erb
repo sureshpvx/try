@@ -1,1 +1,16 @@
-
+<% if Current.session %>
+    <div class="bg-gray-100 p-4 rounded-lg shadow-md">
+        <p class="text-xl font-semibold text-gray-800">Hello, <%= Current.session.name %></p>
+        <p class="text-gray-600">Provider: <%= Current.session.provider %></p>
+        <div class="mt-2">
+            <img src="<%= Current.session.image_url %>" alt="User image" class="w-16 h-16 rounded-full">
+        </div>
+        <div class="mt-4">
+            <%= button_to "Logout", session_path, method: :delete, data: { turbo: true }, class: "bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition" %>
+        </div>
+    </div>
+<% else %>
+    <div class="bg-gray-100 p-4 rounded-lg shadow-md">
+        <%= link_to "Login", new_session_path, class: "text-blue-500 hover:text-blue-700 font-medium" %>
+    </div>
+<% end %>

@@ -3,6 +3,7 @@ module Authentication
 
   included do
     before_action :require_authentication
+    before_action :set_current_session
     helper_method :authenticated?
   end
 
@@ -15,6 +16,15 @@ module Authentication
   private
     def authenticated?
       resume_session
+    end
+
+    def set_current_session
+      # If the session has a user_id, set the current user
+      if session[:user_id]
+        Current.session = User.find_by(id: session[:user_id])
+      else
+        Current.session = nil
+      end
     end
 
     def require_authentication

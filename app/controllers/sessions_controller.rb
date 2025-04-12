@@ -23,19 +23,18 @@ class SessionsController < ApplicationController
   end
 
   def google_oauth2
-    auth = request.env['omniauth.auth']
-    Rails.logger.info "Auth data: #{auth.inspect}"
-    
-    user = User.from_omniauth(auth)
-    Rails.logger.info "User after from_omniauth: #{user.inspect}"
-    
-    if user.save
-      Rails.logger.info "User saved successfully"
-      session[:user_id] = user.id
-      redirect_to root_path, notice: "Signed in with Google successfully"
+    @user = User.from_omniauth(request.env['omniauth.auth'])
+    if @user.persisted?
+      # Set session[:user_id] so that it persists across requests
+      session[:user_id] = @user.id
+      
+      # Set Current.session to the user (you can adjust this based on your setup)
+      Current.session = @user
+  
+      # Redirect to the root page after successful login
+      redirect_to root_path
     else
-      Rails.logger.error "User save failed: #{user.errors.full_messages}"
-      redirect_to sign_in_path, alert: "Authentication failed: #{user.errors.full_messages.join(', ')}"
+      redirect_to root_path, alert: "Could not authenticate."
     end
-  end
+  end  
 end

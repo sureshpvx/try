@@ -8,6 +8,10 @@ class User < ApplicationRecord
   validates :provider, presence: true, if: -> { uid.present? }
   validates :uid, presence: true, if: -> { provider.present? }
 
+  def google_user?
+    provider == 'google_oauth2'
+  end
+
   def self.from_omniauth(auth)
     Rails.logger.info "Processing OAuth data: #{auth.inspect}"
     
